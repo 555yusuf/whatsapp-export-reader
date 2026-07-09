@@ -1,176 +1,364 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp Chat Viewer</title>
     <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #e2e1de; height: 100vh; display: flex; flex-direction: column; }
-        
-        #upload-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f0f2f5; }
-        .upload-card { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; max-width: 500px; width: 100%; }
-        .upload-card h2 { margin-top: 0; color: #41525d; }
-        .upload-card p { color: #667781; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
-        input[type="file"] { margin: 15px 0; border: 1px solid #d1d7db; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer; }
-        button { background-color: #00a884; color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; transition: 0.3s; width: 100%; font-weight: bold; }
-        button:hover { background-color: #008f6f; }
-        button:disabled { background-color: #88d4c5; cursor: not-allowed; }
+        * {
+            box-sizing: border-box;
+        }
 
-        #chat-screen { display: none; flex-direction: column; height: 100vh; max-width: 1200px; margin: 0 auto; width: 100%; box-shadow: 0 0 10px rgba(0,0,0,0.1); background: #efeae2; }
-        .chat-header { background-color: #f0f2f5; padding: 15px 20px; display: flex; align-items: center; border-bottom: 1px solid #d1d7db; z-index: 10; }
-        .chat-header h3 { margin: 0; color: #111b21; font-weight: 500; }
-        
-        .chat-messages { flex: 1; padding: 20px 5%; overflow-y: auto; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-repeat: repeat; opacity: 0.95; }
-        
-        .message-row { display: flex; margin-bottom: 12px; width: 100%; }
-        .message-row.right { justify-content: flex-end; }
-        .message-row.left { justify-content: flex-start; }
-        
-        .message-bubble { max-width: 75%; padding: 6px 7px 8px 9px; border-radius: 7.5px; position: relative; font-size: 14.2px; line-height: 19px; color: #111b21; box-shadow: 0 1px 0.5px rgba(11,20,26,.13); display: flex; flex-direction: column; }
-        .message-row.right .message-bubble { background-color: #d9fdd3; border-top-right-radius: 0; }
-        .message-row.left .message-bubble { background-color: #ffffff; border-top-left-radius: 0; }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #e2e1de;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-        .sender-name { font-size: 12.8px; font-weight: 500; margin-bottom: 4px; color: #1fa855; }
-        .message-row.right .sender-name { display: none; } 
+        #upload-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
 
-        .message-content { white-space: pre-wrap; word-wrap: break-word; }
-        .message-content[dir="rtl"] { text-align: right; } 
-        
-        .message-meta { display: flex; justify-content: flex-end; align-items: center; margin-top: 2px; font-size: 11px; color: #667781; }
-        
-        .media-container { margin-top: 5px; }
-        .media-container img { max-width: 100%; border-radius: 6px; cursor: pointer; max-height: 300px; object-fit: contain; }
-        .media-container audio { max-width: 100%; width: 280px; outline: none; }
-        .media-container video { max-width: 100%; border-radius: 6px; max-height: 300px; }
+        .upload-card {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .upload-card h2 {
+            margin-top: 0;
+            color: #41525d;
+        }
+
+        .upload-card p {
+            color: #667781;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        input[type="file"] {
+            margin: 15px 0;
+            border: 1px solid #d1d7db;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #00a884;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #008f6f;
+        }
+
+        button:disabled {
+            background-color: #88d4c5;
+            cursor: not-allowed;
+        }
+
+        #chat-screen {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: #efeae2;
+        }
+
+        .chat-header {
+            background-color: #f0f2f5;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #d1d7db;
+            z-index: 10;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            color: #111b21;
+            font-weight: 500;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px 5%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+            background-repeat: repeat;
+            opacity: 0.95;
+        }
+
+        .message-row {
+            display: flex;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .message-row.right {
+            justify-content: flex-end;
+        }
+
+        .message-row.left {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 6px 7px 8px 9px;
+            border-radius: 7.5px;
+            position: relative;
+            font-size: 14.2px;
+            line-height: 19px;
+            color: #111b21;
+            box-shadow: 0 1px 0.5px rgba(11, 20, 26, .13);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message-row.right .message-bubble {
+            background-color: #d9fdd3;
+            border-top-right-radius: 0;
+        }
+
+        .message-row.left .message-bubble {
+            background-color: #ffffff;
+            border-top-left-radius: 0;
+        }
+
+        .sender-name {
+            font-size: 12.8px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #1fa855;
+        }
+
+        .message-row.right .sender-name {
+            display: none;
+        }
+
+        .message-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .message-content[dir="rtl"] {
+            text-align: right;
+        }
+
+        .message-meta {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 2px;
+            font-size: 11px;
+            color: #667781;
+        }
+
+        .media-container {
+            margin-top: 5px;
+        }
+
+        .media-container img {
+            max-width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            max-height: 300px;
+            object-fit: contain;
+        }
+
+        .media-container audio {
+            max-width: 100%;
+            width: 280px;
+            outline: none;
+        }
+
+        .media-container video {
+            max-width: 100%;
+            border-radius: 6px;
+            max-height: 300px;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="upload-screen">
-    <div class="upload-card">
-        <h2>WhatsApp Sohbet Görüntüleyici</h2>
-        <p>WhatsApp'tan dışa aktardığınız <b>.txt</b> dosyasını ve tüm <b>medya (resim, ses, video)</b> dosyalarını tek seferde çoklu olarak seçin.</p>
-        <form id="uploadForm">
-            <!-- webkitdirectory ve directory ile kullanıcı tüm klasörü tek tıkla seçebilir -->
-            <input type="file" id="files" name="files" webkitdirectory directory multiple required><br>
-            <button type="submit" id="submitBtn">Yükle ve Görüntüle</button>
-        </form>
-        <div id="loading" style="display:none; margin-top: 15px; color: #00a884; font-weight: 500;">Sohbet işleniyor, lütfen bekleyin...</div>
+    <div id="upload-screen">
+        <div class="upload-card">
+            <h2>WhatsApp Sohbet Görüntüleyici</h2>
+            <p>WhatsApp'tan dışa aktardığınız <b>.txt</b> dosyasını ve tüm <b>medya (resim, ses, video)</b> dosyalarını
+                tek seferde çoklu olarak seçin.</p>
+            <form id="uploadForm">
+                <!-- webkitdirectory ve directory ile kullanıcı tüm klasörü tek tıkla seçebilir -->
+                <input type="file" id="files" name="files" webkitdirectory directory multiple required><br>
+                <button type="submit" id="submitBtn">Yükle ve Görüntüle</button>
+            </form>
+            <div id="loading" style="display:none; margin-top: 15px; color: #00a884; font-weight: 500;">Sohbet
+                işleniyor, lütfen bekleyin...</div>
+        </div>
     </div>
-</div>
 
-<div id="chat-screen">
-    <div class="chat-header">
-        <h3>WhatsApp Sohbeti</h3>
+    <div id="chat-screen">
+        <div class="chat-header">
+            <h3>WhatsApp Sohbeti</h3>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
     </div>
-    <div class="chat-messages" id="chat-messages"></div>
-</div>
 
-<script>
-    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const filesInput = document.getElementById('files');
-        if (filesInput.files.length === 0) return;
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const filesInput = document.getElementById('files');
+            if (filesInput.files.length === 0) return;
 
-        const formData = new FormData();
-        for (let file of filesInput.files) {
-            formData.append('files', file);
-        }
+            const txtFile = Array.from(filesInput.files).find(f => f.name.endsWith('.txt'));
 
-        document.getElementById('loading').style.display = 'block';
-        document.getElementById('submitBtn').disabled = true;
-
-        try {
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
-            const messages = await response.json();
-            
-            if (response.ok) {
-                renderMessages(messages);
-                document.getElementById('upload-screen').style.display = 'none';
-                document.getElementById('chat-screen').style.display = 'flex';
-            } else {
-                alert('Hata: ' + messages.error);
+            if (!txtFile) {
+                alert('Lütfen bir .txt dosyası seçin.');
+                return;
             }
-        } catch (err) {
-            alert('Sunucuya bağlanılamadı. Uygulamanın çalıştığından emin olun.');
-        } finally {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('submitBtn').disabled = false;
-        }
-    });
 
-    function renderMessages(messages) {
-        const container = document.getElementById('chat-messages');
-        container.innerHTML = ''; 
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
 
-        messages.forEach(msg => {
-            const isMe = msg.sender === 'Eng. Yusuf İbrahim' || msg.sender === 'ENG_Yusuf';
-            
-            const row = document.createElement('div');
-            row.className = `message-row ${isMe ? 'right' : 'left'}`;
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const fileContent = event.target.result;
 
-            let contentHtml = '';
-            
-            if (msg.type === 'Media') {
-                if (!msg.fileExists) {
-                    contentHtml = `<div class="message-content" style="color: #667781; font-style: italic; background-color: #f0f2f5; padding: 5px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; border: 1px solid #d1d7db;">
+                const payload = { txtContent: fileContent };
+
+                const fileMap = {};
+                for (let file of filesInput.files) {
+                    if (!file.name.endsWith('.txt')) {
+                        fileMap[file.name.trim()] = file;
+                    }
+                }
+
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const messages = await response.json();
+
+                    if (response.ok) {
+                        renderMessages(messages, fileMap);
+                        document.getElementById('upload-screen').style.display = 'none';
+                        document.getElementById('chat-screen').style.display = 'flex';
+                    } else {
+                        alert('Hata: ' + messages.error);
+                    }
+                } catch (err) {
+                    alert('Sunucuya bağlanılamadı. Uygulamanın çalıştığından emin olun.');
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('submitBtn').disabled = false;
+                }
+            };
+
+            reader.readAsText(txtFile);
+        });
+
+        function renderMessages(messages, fileMap) {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = '';
+
+            messages.forEach(msg => {
+                const isMe = msg.sender === 'Eng. Yusuf İbrahim' || msg.sender === 'ENG_Yusuf';
+
+                const row = document.createElement('div');
+                row.className = `message-row ${isMe ? 'right' : 'left'}`;
+
+                let contentHtml = '';
+
+                if (msg.type === 'Media') {
+                    const fileObj = fileMap[msg.content];
+                    if (!fileObj) {
+                        contentHtml = `<div class="message-content" style="color: #667781; font-style: italic; background-color: #f0f2f5; padding: 5px 10px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; border: 1px solid #d1d7db;">
                                       <span>⚠️</span> <span>Dosya bulunamadı: ${escapeHtml(msg.content)}</span>
                                    </div>`;
-                } else {
-                    const ext = msg.content.split('.').pop().toLowerCase();
-                    const fileUrl = '/uploads/' + encodeURIComponent(msg.content);
-                    
-                    if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
-                        contentHtml = `<div class="media-container">
+                    } else {
+                        const ext = msg.content.split('.').pop().toLowerCase();
+                        const fileUrl = URL.createObjectURL(fileObj);
+
+                        if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext)) {
+                            contentHtml = `<div class="media-container">
                                           <a href="${fileUrl}" target="_blank">
                                             <img src="${fileUrl}" alt="Resim" onerror="this.onerror=null; this.outerHTML='<a href=${fileUrl} target=_blank>${msg.content}</a>'">
                                           </a>
                                        </div>`;
-                    } else if (['mp3', 'ogg', 'opus', 'wav', 'm4a', 'aac'].includes(ext)) {
-                        contentHtml = `<div class="media-container">
+                        } else if (['mp3', 'ogg', 'opus', 'wav', 'm4a', 'aac'].includes(ext)) {
+                            contentHtml = `<div class="media-container">
                                           <audio controls src="${fileUrl}"></audio>
                                        </div>`;
-                    } else if (['mp4', 'avi', 'mov', 'webm'].includes(ext)) {
-                        contentHtml = `<div class="media-container">
+                        } else if (['mp4', 'avi', 'mov', 'webm'].includes(ext)) {
+                            contentHtml = `<div class="media-container">
                                           <video controls src="${fileUrl}"></video>
                                        </div>`;
-                    } else {
-                        contentHtml = `<a href="${fileUrl}" target="_blank" style="color:#027eb5; text-decoration:none; font-weight: 500;">📄 ${msg.content} (İndir)</a>`;
+                        } else {
+                            contentHtml = `<a href="${fileUrl}" download="${escapeHtml(msg.content)}" style="color:#027eb5; text-decoration:none; font-weight: 500;">📄 ${msg.content} (İndir)</a>`;
+                        }
                     }
-                }
-            } else {
-                const arabicRegex = /[\u0600-\u06FF]/;
-                const dir = arabicRegex.test(msg.content) ? 'rtl' : 'ltr';
-                
-                const safeContent = escapeHtml(msg.content).replace(/\n/g, '<br>');
-                contentHtml = `<div class="message-content" dir="${dir}">${safeContent}</div>`;
-            }
+                } else {
+                    const arabicRegex = /[\u0600-\u06FF]/;
+                    const dir = arabicRegex.test(msg.content) ? 'rtl' : 'ltr';
 
-            row.innerHTML = `
+                    const safeContent = escapeHtml(msg.content).replace(/\n/g, '<br>');
+                    contentHtml = `<div class="message-content" dir="${dir}">${safeContent}</div>`;
+                }
+
+                row.innerHTML = `
                 <div class="message-bubble">
                     ${!isMe ? `<div class="sender-name">${escapeHtml(msg.sender)}</div>` : ''}
                     ${contentHtml}
                     <div class="message-meta">${escapeHtml(msg.time)}</div>
                 </div>
             `;
-            container.appendChild(row);
-        });
+                container.appendChild(row);
+            });
 
-        container.scrollTop = container.scrollHeight;
-    }
+            container.scrollTop = container.scrollHeight;
+        }
 
-    function escapeHtml(unsafe) {
-        return (unsafe || '')
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-</script>
+        function escapeHtml(unsafe) {
+            return (unsafe || '')
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
 </body>
+
 </html>
